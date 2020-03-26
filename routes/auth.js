@@ -3,6 +3,7 @@ const router = require('express').Router();
 const User = require('../models/User.js');
 const sanitizeBody = require('../middleware/sanitizeBody');
 const authorize = require('../middleware/auth.js');
+const authentication_attempts = require('../models/Authentication_Attempts.js');
 
 //create the post method that will take in the user email, password etc
 //from the request body and will verify if the email is unique then create the user/
@@ -56,6 +57,7 @@ router.post('/tokens', sanitizeBody, async (req, res) => {
     const user = await User.authenticate(email, password);
 
     if(!user){
+        logAuthorizationAttempt(req, false);
         return res.status(401).send({
             errors: [
                 {
@@ -69,6 +71,7 @@ router.post('/tokens', sanitizeBody, async (req, res) => {
 
     //if the user validates properly send back the Bearer token with the generate auth token function
     //we added onto the user model
+    logAuthorizationAttempt(req, true);
     res.status(201).send({data: {token: user.generateAuthToken()}})
 });
 
@@ -80,5 +83,13 @@ router.get('/users/me', authorize, async (req, res) =>{
     let user = await User.findById(req.user._id);
     res.status(200).send({data: user});
 })
+
+//because we will log the authentication attempt only after attempt was made
+//we will only use the sanitized body from the request to avoid any malicious attempts
+const logAuthorizationAttempt = function(req, didSucceed){
+    //first get the authentication attempt info from the sanitized body
+    const {email} = req.sanitizedBody;
+    console.log(email, req); //log the request to see how to get the rest of the info
+} 
 
 module.exports = router;
