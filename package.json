@@ -18,9 +18,11 @@
   },
   "homepage": "https://github.com/MAD9124-W20/a3-jwt-auth-rach0022#readme",
   "dependencies": {
+    "bcrypt": "^4.0.1",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-mongo-sanitize": "^1.3.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.5",
     "nodemon": "^2.0.2",
     "xss": "^1.0.6"
