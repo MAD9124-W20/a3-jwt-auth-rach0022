@@ -4,6 +4,7 @@ const debug = require('debug')('a3:CourseRouter')
 const validateCourseId = require('../middleware/validateCourseId.js');
 const Course = require('../models/Course.js');
 const sanitizeBody = require('../middleware/sanitizeBody.js');
+const isAdmin = require('../middleware/isAdmin.js');
 
 router.use('/:id', validateCourseId);
 
@@ -14,7 +15,7 @@ router.get('/', async (req,res) =>{
     res.status(200).send({data}); //send status code 200 for ok
 });
 
-router.post('/', sanitizeBody, async (req, res) =>{
+router.post('/', sanitizeBody, isAdmin, async (req, res) =>{
     let newCourse = new Course(req.sanitizedBody);
     debug(req.sanitizedBody);
     await newCourse.save();
@@ -27,7 +28,7 @@ router.get('/:id', async (req, res) => {
     res.status(200).send({data: course});
 });
 
-router.patch('/:id', sanitizeBody, async (req, res) =>{
+router.patch('/:id', sanitizeBody, isAdmin, async (req, res) =>{
     const course = await Course.findByIdAndUpdate(
         req.courseId,
         req.sanitizedBody,
@@ -45,7 +46,7 @@ router.patch('/:id', sanitizeBody, async (req, res) =>{
     ).populate('students')
 });
 
-router.put('/:id', sanitizeBody, async (req, res) =>{
+router.put('/:id', sanitizeBody, isAdmin, async (req, res) =>{
     const course = await Course.findByIdAndUpdate(
         req.courseId,
         req.sanitizedBody,
@@ -62,7 +63,7 @@ router.put('/:id', sanitizeBody, async (req, res) =>{
     ).populate('students')
 });
 
-router.delete('/:id', async (req, res) =>{
+router.delete('/:id', isAdmin, async (req, res) =>{
     const course = await Course.findByIdAndRemove(req.courseId);
     debug(course);
     res.status(202).send({data: course}); //status code 202 for accepted

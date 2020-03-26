@@ -12,7 +12,9 @@ const parseToken = function(headerValue){
     }
 }
 
-module.exports = (req, res, next) =>{
+//now that we have the middle ware to authorize
+//we can use this in all the routes needed for all student and course routes
+module.exports  = (req, res, next) =>{
     //get the JWT from the request header
     const token = parseToken(req.header('Authorization'));
     
@@ -45,7 +47,7 @@ module.exports = (req, res, next) =>{
                     status: 'Bad Request',
                     code: '400',
                     title: 'Validation Error',
-                    description: 'Ivalid Bearer Token'
+                    description: 'Invalid Bearer Token'
                 }
             ]
         })

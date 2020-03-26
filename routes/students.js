@@ -4,6 +4,7 @@ const debug = require('debug')('a3:StudentRouter');
 const validateStudentId = require('../middleware/validateStudentId.js');
 const Student = require('../models/Student.js');
 const sanitizeBody = require('../middleware/sanitizeBody.js');
+const isAdmin = require('../middleware/isAdmin.js');
 
 router.use('/:id', validateStudentId);
 
@@ -12,7 +13,7 @@ router.get('/', async (req, res) =>{
     res.status(200).send({data});
 });
 
-router.post('/', sanitizeBody, async (req, res) =>{
+router.post('/', isAdmin, sanitizeBody, async (req, res) =>{
     let newStudent = new Student(req.sanitizedBody);
     debug(req.sanitizedBody);
     await newStudent.save();
@@ -25,7 +26,7 @@ router.get('/:id', async (req, res) =>{
     res.status(200).send({data: student});
 });
 
-router.patch('/:id', sanitizeBody, async (req, res) =>{
+router.patch('/:id', isAdmin, sanitizeBody, async (req, res) =>{
     const student = await Student.findByIdAndUpdate(
         req.studentId,
         req.sanitizedBody,
@@ -40,7 +41,7 @@ router.patch('/:id', sanitizeBody, async (req, res) =>{
         }
     )
 });
-router.put('/:id', sanitizeBody, async (req, res) =>{
+router.put('/:id', isAdmin, sanitizeBody, async (req, res) =>{
     const student = await Student.findByIdAndUpdate(
         req.studentId,
         req.sanitizedBody,
@@ -56,7 +57,7 @@ router.put('/:id', sanitizeBody, async (req, res) =>{
         }
     )
 });
-router.delete('/:id', sanitizeBody, async (req, res) =>{
+router.delete('/:id', isAdmin, sanitizeBody, async (req, res) =>{
     const student = await Student.findByIdAndRemove(req.studentId);
     debug(student);
     res.status(200).send({data: student})
